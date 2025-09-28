@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personal Finance Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+</head>
+
+<body>
+  <!-- Splash Screen -->
+  <div class="splash-screen">
+    <div class="splash-logo">
+      <i class="fas fa-wallet"></i>
+    </div>
+    <h1 class="splash-title">Personal Finance Management System</h1>
+    <div class="progress-bar">
+      <div class="progress" id="splashProgress"></div>
+    </div>
+  </div>
+
+  <!-- Enhanced Navigation -->
+  <nav class="navbar">
+    <a href="#" class="nav-brand">
+      <i class="fas fa-wallet"></i> FinManager
+    </a>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="#" class="nav-link active">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" onclick="openAddTransactionModal()">
+          <i class="fas fa-plus-circle"></i> Add Transaction
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" onclick="openAllTransactionsModal()">
+          <i class="fas fa-list"></i> Transactions
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" onclick="showBudgetPlanner()">
+          <i class="fas fa-chart-pie"></i> Budgets
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" onclick="showReports()">
+          <i class="fas fa-chart-bar"></i> Reports
+        </a>
+      </li>
+    </ul>
+    
+    <div class="nav-actions">
+      <div class="notification-bell" onclick="toggleNotifications()">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notificationCount">3</span>
+      </div>
+      
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="themeIcon"></i>
+      </div>
+      
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Notifications Panel -->
+  <div class="notifications-container" id="notificationsPanel">
+    <h3>Notifications</h3>
+    <div class="notification-item">
+      <div class="notification-content">You've exceeded your monthly food budget</div>
+      <div class="notification-time">2 hours ago</div>
+    </div>
+    <div class="notification-item">
+      <div class="notification-content">Recurring payment for Netflix due tomorrow</div>
+      <div class="notification-time">Yesterday</div>
+    </div>
+    <div class="notification-item">
+      <div class="notification-content">Your financial health score improved by 10 points</div>
+      <div class="notification-time">2 days ago</div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div class="app-container" id="appContainer" style="display: none;">
+    <header>
+      <h1 class="app-title">
+        <i class="fas fa-dashboard"></i> Financial Dashboard
+      </h1>
+      <div class="user-profile">
+        <div class="user-avatar">HS</div>
+        <span>Himanshu Singh</span>
+        <div class="user-dropdown">
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-user"></i> Profile
+          </a>
+          <a href="#" class="dropdown-item" onclick="openSettingsModal()">
+            <i class="fas fa-cog"></i> Settings
+          </a>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <div class="quick-action-btn" onclick="openAddTransactionModal()">
+        <i class="fas fa-plus-circle"></i>
+        <span>Add Transaction</span>
+      </div>
+      <div class="quick-action-btn" onclick="openAllTransactionsModal()">
+        <i class="fas fa-history"></i>
+        <span>Transaction History</span>
+      </div>
+      <div class="quick-action-btn" onclick="showBudgetPlanner()">
+        <i class="fas fa-chart-pie"></i>
+        <span>Budget Planner</span>
+      </div>
+      <div class="quick-action-btn" onclick="showReports()">
+        <i class="fas fa-file-export"></i>
+        <span>Generate Report</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Summary -->
+    <div class="dashboard-grid">
+      <div class="card balance-card">
+        <div class="card-header">
+          <div class="card-title">Total Balance</div>
+          <div class="card-icon">
+            <i class="fas fa-piggy-bank"></i>
+          </div>
+        </div>
+        <div class="card-amount" id="totalBalance">₹0.00</div>
+        <div class="card-change">
+          <span id="balanceChange">+0%</span> from last month
+        </div>
+      </div>
+
+      <div class="card income-card">
+        <div class="card-header">
+          <div class="card-title">Income</div>
+          <div class="card-icon">
+            <i class="fas fa-arrow-down"></i>
+          </div>
+        </div>
+        <div class="card-amount" id="totalIncome">₹0.00</div>
+        <div class="card-change">
+          <span id="incomeChange" class="positive">+0%</span> from last month
+        </div>
+      </div>
+
+      <div class="card expense-card">
+        <div class="card-header">
+          <div class="card-title">Expenses</div>
+          <div class="card-icon">
+            <i class="fas fa-arrow-up"></i>
+          </div>
+        </div>
+        <div class="card-amount" id="totalExpense">₹0.00</div>
+        <div class="card-change">
+          <span id="expenseChange" class="negative">+0%</span> from last month
+        </div>
+      </div>
+
+      <div class="card savings-card">
+        <div class="card-header">
+          <div class="card-title">Savings</div>
+          <div class="card-icon">
+            <i class="fas fa-piggy-bank"></i>
+          </div>
+        </div>
+        <div class="card-amount" id="totalSavings">₹0.00</div>
+        <div class="card-change">
+          <span id="savingsRate">0%</span> of income
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="chart-container">
+      <div class="chart-card">
+        <div class="chart-title">Income vs Expenses</div>
+        <div class="time-filter">
+          <button class="time-filter-btn active" onclick="changeTimeFilter('month', this)">Month</button>
+          <button class="time-filter-btn" onclick="changeTimeFilter('quarter', this)">Quarter</button>
+          <button class="time-filter-btn" onclick="changeTimeFilter('year', this)">Year</button>
+        </div>
+        <canvas id="incomeExpenseChart"></canvas>
+      </div>
+      
+      <div class="chart-card">
+        <div class="chart-title">Expense Breakdown</div>
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="transaction-section">
+      <div class="section-header">
+        <h2 class="section-title">Recent Transactions</h2>
+        <button class="btn btn-outline" onclick="openAllTransactionsModal()">
+          <i class="fas fa-list"></i> View All
+        </button>
+      </div>
+      
+      <div class="search-filter-container">
+        <input type="text" class="search-box" placeholder="Search transactions..." id="transactionSearch">
+        <select class="filter-select" id="categoryFilter">
+          <option value          value="all">All Categories</option>
+          <option value="food">Food</option>
+          <option value="rent">Rent</option>
+          <option value="transport">Transport</option>
+          <option value="medical">Medical</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="shopping">Shopping</option>
+          <option value="income">Income</option>
+          <option value="investment">Investment</option>
+        </select>
+      </div>
+      
+      <ul class="transaction-list" id="recentTransactions">
+        <!-- Transactions will be dynamically inserted here -->
+      </ul>
+    </div>
+
+    <!-- Budget Goals Section -->
+    <div class="budget-card">
+      <div class="section-header">
+        <h2 class="section-title">Budget Goals</h2>
+        <button class="btn" onclick="openBudgetModal()">
+          <i class="fas fa-plus"></i> Set Budget
+        </button>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Food</span>
+          <span>₹3,500 / ₹5,000</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 70%; background-color: #4bc0c0;"></div>
+        </div>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Entertainment</span>
+          <span>₹2,500 / ₹3,000</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 83%; background-color: #ff9f40;"></div>
+        </div>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Shopping</span>
+          <span>₹4,000 / ₹3,000</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 133%; background-color: #ff6384;"></div>
+        </div>
+        <div class="warning">
+          <i class="fas fa-exclamation-triangle"></i> You've exceeded your budget
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Health Score -->
+    <div class="card health-score-card">
+      <div class="card-header">
+        <div class="card-title">Financial Health Score</div>
+        <div class="card-icon">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+      </div>
+      <div class="health-score" id="healthScore">72</div>
+      <div class="health-status">Good - You're on track with your finances</div>
+      <div class="chart-actions">
+        <button class="btn btn-sm" onclick="showHealthTips()">
+          <i class="fas fa-lightbulb"></i> Improvement Tips
+        </button>
+      </div>
+    </div>
+
+    <!-- Financial Insights -->
+    <div class="insights-container">
+      <div class="insight-card">
+        <div class="insight-header">
+          <div class="insight-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="insight-title">Top Spending Category</div>
+        </div>
+        <div class="insight-content">
+          Your highest spending is on <span class="insight-value">Food</span>, accounting for 35% of your total expenses.
+        </div>
+      </div>
+      
+      <div class="insight-card">
+        <div class="insight-header">
+          <div class="insight-icon">
+            <i class="fas fa-trending-up"></i>
+          </div>
+          <div class="insight-title">Savings Rate</div>
+        </div>
+        <div class="insight-content">
+          You're saving <span class="insight-value">25%</span> of your income, which is above the recommended 20%.
+        </div>
+      </div>
+      
+      <div class="insight-card">
+        <div class="insight-header">
+          <div class="insight-icon">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <div class="insight-title">Recurring Expenses</div>
+        </div>
+        <div class="insight-content">
+          You have <span class="insight-value">5 recurring payments</span> totaling ₹8,500 per month.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Transaction Modal -->
+  <div class="modal" id="addTransactionModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Add Transaction</h2>
+        <button class="close-modal" onclick="closeModal('addTransactionModal')">&times;</button>
+      </div>
+      
+      <form id="transactionForm">
+        <div class="form-group">
+          <label for="transactionType">Type</label>
+          <select class="form-control" id="transactionType" required>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="transactionAmount">Amount (₹)</label>
+          <input type="number" class="form-control" id="transactionAmount" placeholder="Enter amount" required min="0" step="0.01">
+        </div>
+        
+        <div class="form-group">
+          <label for="transactionCategory">Category</label>
+          <select class="form-control" id="transactionCategory" required>
+            <option value="food">Food</option>
+            <option value="rent">Rent</option>
+            <option value="transport">Transport</option>
+            <option value="medical">Medical</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="shopping">Shopping</option>
+            <option value="investment">Investment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="transactionDate">Date</label>
+          <input type="date" class="form-control" id="transactionDate" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="transactionDescription">Description</label>
+          <input type="text" class="form-control" id="transactionDescription" placeholder="Enter description" required>
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="isRecurring"> This is a recurring transaction
+          </label>
+        </div>
+        
+        <div class="recurring-options" id="recurringOptions">
+          <div class="form-group">
+            <label for="recurringFrequency">Frequency</label>
+            <select class="form-control" id="recurringFrequency">
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn">Add Transaction</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- All Transactions Modal -->
+  <div class="modal" id="allTransactionsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">All Transactions</h2>
+        <button class="close-modal" onclick="closeModal('allTransactionsModal')">&times;</button>
+      </div>
+      
+      <div class="search-filter-container">
+        <input type="text" class="search-box" placeholder="Search transactions..." id="allTransactionsSearch">
+        <select class="filter-select" id="allTransactionsCategoryFilter">
+          <option value="all">All Categories</option>
+          <option value="food">Food</option>
+          <option value="rent">Rent</option>
+          <option value="transport">Transport</option>
+          <option value="medical">Medical</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="shopping">Shopping</option>
+          <option value="income">Income</option>
+          <option value="investment">Investment</option>
+        </select>
+      </div>
+      
+      <ul class="transaction-list" id="allTransactionsList">
+        <!-- All transactions will be dynamically inserted here -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Settings</h2>
+        <button class="close-modal" onclick="closeModal('settingsModal')">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Currency</label>
+        <select class="form-control" id="currencySetting">
+          <option value="inr" selected>Indian Rupee (₹)</option>
+          <option value="usd">US Dollar ($)</option>
+          <option value="eur">Euro (€)</option>
+          <option value="gbp">British Pound (£)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Date Format</label>
+        <select class="form-control" id="dateFormatSetting">
+          <option value="dd-mm-yyyy">DD-MM-YYYY</option>
+          <option value="mm-dd-yyyy">MM-DD-YYYY</option>
+          <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="notificationsSetting"> Enable Notifications
+        </label>
+      </div>
+      
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="darkModeSetting" checked> Dark Mode
+        </label>
+      </div>
+      
+      <div class="data-actions">
+        <button class="btn btn-outline" onclick="exportData()">
+          <i class="fas fa-download"></i> Export Data
+        </button>
+        <button class="btn btn-outline" onclick="importData()">
+          <i class="fas fa-upload"></i> Import Data
+        </button>
+        <button class="btn btn-outline" style="color: var(--danger);" onclick="confirmReset()">
+          <i class="fas fa-trash"></i> Reset Data
+        </button>
+      </div>
+      
+      <button class="btn" style="margin-top: 20px;" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+
+  <!-- Budget Modal -->
+  <div class="modal" id="budgetModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Set Budget</h2>
+        <button class="close-modal" onclick="closeModal('budgetModal')">&times;</button>
+      </div>
+      
+      <form id="budgetForm">
+        <div class="form-group">
+          <label for="budgetCategory">Category</label>
+          <select class="form-control" id="budgetCategory" required>
+            <option value="food">Food</option>
+            <option value="rent">Rent</option>
+            <option value="transport">Transport</option>
+            <option value="medical">Medical</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="shopping">Shopping</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="budgetAmount">Budget Amount (₹)</label>
+          <input type="number" class="form-control" id="budgetAmount" placeholder="Enter amount" required min="0" step="0.01">
+        </div>
+        
+        <div class="form-group">
+          <label for="budgetPeriod">Budget Period</label>
+          <select class="form-control" id="budgetPeriod" required>
+            <option value="weekly">Weekly</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="btn">Set Budget</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation for Mobile -->
+  <div class="bottom-nav">
+    <a href="#" class="nav-item active">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="nav-item" onclick="openAddTransactionModal()">
+      <i class="fas fa-plus-circle"></i>
+      <span>Add</span>
+    </a>
+    <a href="#" class="nav-item" onclick="openAllTransactionsModal()">
+      <i class="fas fa-list"></i>
+      <span>Transactions</span>
+    </a>
+    <a href="#" class="nav-item" onclick="openSettingsModal()">
+      <i class="fas fa-cog"></i>
+      <span>Settings</span>
+    </a>
+  </div>
+
+  <script>
+    // Sample transaction data
+    let transactions = [
+      { id: 1, type: 'expense', amount: 1200, category: 'food', date: '2023-06-15', description: 'Grocery shopping' },
+      { id: 2, type: 'expense', amount: 800, category: 'transport', date: '2023-06-14', description: 'Fuel' },
+      { id: 3, type: 'income', amount: 50000, category: 'income', date: '2023-06-10', description: 'Salary' },
+      { id: 4, type: 'expense', amount: 15000, category: 'rent', date: '2023-06-05', description: 'Monthly rent' },
+      { id: 5, type: 'expense', amount: 2500, category: 'entertainment', date: '2023-06-12', description: 'Movie tickets' },
+      { id: 6, type: 'expense', amount: 3500, category: 'shopping', date: '2023-06-08', description: 'New clothes' },
+      { id: 7, type: 'expense', amount: 1200, category: 'medical', date: '2023-06-03', description: 'Medicine' },
+      { id: 8, type: 'income', amount: 5000, category: 'investment', date: '2023-06-01', description: 'Dividends' }
+    ];
+
+    // Sample budget data
+    let budgets = [
+      { category: 'food', amount: 5000, period: 'monthly' },
+      { category: 'entertainment', amount: 3000, period: 'monthly' },
+      { category: 'shopping', amount: 3000, period: 'monthly' }
+    ];
+
+    // Chart instances
+    let incomeExpenseChart;
+    let expenseChart;
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      // Show splash screen with progress animation
+      const progressBar = document.getElementById('splashProgress');
+      let width = 0;
+      const interval = setInterval(() => {
+        if (width >= 100) {
+          clearInterval(interval);
+          document.querySelector('.splash-screen').classList.add('hidden');
+          document.getElementById('appContainer').style.display = 'block';
+          initializeApp();
+        } else {
+          width += 5;
+          progressBar.style.width = width + '%';
+        }
+      }, 100);
+
+      // Set today's date as default for transaction form
+      document.getElementById('transactionDate').valueAsDate = new Date();
+      
+      // Toggle recurring options based on checkbox
+      document.getElementById('isRecurring').addEventListener('change', function() {
+        document.getElementById('recurringOptions').style.display = this.checked ? 'block' : 'none';
+      });
+    });
+
+    // Initialize the application after splash screen
+    function initializeApp() {
+      loadTransactions();
+      updateDashboard();
+      initializeCharts();
+      updateRecentTransactions();
+      
+      // Load settings if available
+      if (localStorage.getItem('financeSettings')) {
+        const settings = JSON.parse(localStorage.getItem('financeSettings'));
+        document.getElementById('currencySetting').value = settings.currency || 'inr';
+        document.getElementById('dateFormatSetting').value = settings.dateFormat || 'dd-mm-yyyy';
+        document.getElementById('notificationsSetting').checked = settings.notifications !== false;
+        document.getElementById('darkModeSetting').checked = settings.darkMode !== false;
+        
+        if (settings.darkMode !== false) {
+          document.body.classList.add('dark');
+          document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+        }
+      }
+      
+      // Load transactions if available
+      if (localStorage.getItem('financeTransactions')) {
+        transactions = JSON.parse(localStorage.getItem('financeTransactions'));
+      }
+      
+      // Load budgets if available
+      if (localStorage.getItem('financeBudgets')) {
+        budgets = JSON.parse(localStorage.getItem('financeBudgets'));
+      }
+    }
+
+    // Toggle mobile menu
+    function toggleMenu() {
+      document.querySelector('.nav-menu').classList.toggle('active');
+      document.querySelector('.hamburger').classList.toggle('active');
+    }
+
+    // Toggle theme between light and dark
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+      const themeIcon = document.getElementById('themeIcon');
+      if (document.body.classList.contains('dark')) {
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        themeIcon.classList.replace('fa-sun', 'fa-moon');
+      }
+    }
+
+    // Toggle notifications panel
+    function toggleNotifications() {
+      document.getElementById('notificationsPanel').style.display = 
+        document.getElementById('notificationsPanel').style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Open modal by ID
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'flex';
+    }
+
+    // Close modal by ID
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Open add transaction modal
+    function openAddTransactionModal() {
+      openModal('addTransactionModal');
+    }
+
+    // Open all transactions modal
+    function openAllTransactionsModal() {
+      openModal('allTransactionsModal');
+      renderAllTransactions();
+    }
+
+    // Open settings modal
+    function openSettingsModal() {
+      openModal('settingsModal');
+    }
+
+    // Show budget planner
+    function showBudgetPlanner() {
+      openModal('budgetModal');
+    }
+
+    // Show reports
+    function showReports() {
+      alert('Reports feature coming soon!');
+    }
+
+    // Show health tips
+    function showHealthTips() {
+      alert('Financial Health Tips:\n\n1. Save at least 20% of your income\n2. Limit housing costs to 30% of income\n3. Keep debt payments below 35% of income\n4. Maintain an emergency fund of 3-6 months expenses');
+    }
+
+    // Initialize charts
+    function initializeCharts() {
+      // Income vs Expense Chart
+      const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+      incomeExpenseChart = new Chart(incomeExpenseCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [
+            {
+              label: 'Income',
+              data: [45000, 52000, 48000, 55000, 60000, 55000],
+              backgroundColor: '#4cc9f0',
+              borderColor: '#4cc9f0',
+              borderWidth: 1
+            },
+            {
+              label: 'Expenses',
+              data: [32000, 35000, 38000, 37000, 39000, 42000],
+              backgroundColor: '#f72585',
+              borderColor: '#f72585',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Expense Breakdown Chart
+      const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+      expenseChart = new Chart(expenseCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Food', 'Rent', 'Transport', 'Medical', 'Entertainment', 'Shopping'],
+          datasets: [{
+            data: [25, 35, 15, 10, 8, 7],
+            backgroundColor: [
+              '#ff6384',
+              '#36a2eb',
+              '#ffce56',
+              '#4bc0c0',
+              '#9966ff',
+              '#ff9f40'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'right'
+            }
+          }
+        }
+      });
+    }
+
+    // Change time filter for charts
+    function changeTimeFilter(period, element) {
+      // Remove active class from all buttons
+      const buttons = element.parentElement.querySelectorAll('.time-filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      // Add active class to clicked button
+      element.classList.add('active');
+      
+      // Update chart data based on period
+      // This would typically fetch data from server based on period
+      // For demo, we'll just show an alert
+      console.log('Changing time filter to:', period);
+    }
+
+    // Load transactions into the UI
+    function loadTransactions() {
+      // This would typically fetch from an API or database
+      // For now, we're using the sample data
+      updateRecentTransactions();
+    }
+
+    // Update dashboard with summary information
+    function updateDashboard() {
+      // Calculate totals
+      const totalIncome = transactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+        
+      const totalExpense = transactions
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+        
+      const totalBalance = totalIncome - totalExpense;
+      const savingsRate = totalIncome > 0 ? (totalBalance / totalIncome * 100).toFixed(1) : 0;
+
+      // Update UI
+      document.getElementById('totalBalance').textContent = formatCurrency(totalBalance);
+      document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+      document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+      document.getElementById('totalSavings').textContent = formatCurrency(totalBalance);
+      document.getElementById('savingsRate').textContent = `${savingsRate}%`;
+      
+      // Update health score based on financial metrics
+      updateHealthScore(totalIncome, totalExpense, savingsRate);
+    }
+
+    // Format currency based on settings
+    function formatCurrency(amount) {
+      const settings = localStorage.getItem('financeSettings') 
+        ? JSON.parse(localStorage.getItem('financeSettings'))
+        : { currency: 'inr' };
+        
+      switch(settings.currency) {
+        case 'usd':
+          return '$' + amount.toLocaleString();
+        case 'eur':
+          return '€' + amount.toLocaleString();
+        case 'gbp':
+          return '£' + amount.toLocaleString();
+        default:
+          return '₹' + amount.toLocaleString();
+      }
+    }
+
+    // Update financial health score
+    function updateHealthScore(income, expenses, savingsRate) {
+      // Simple algorithm to calculate health score
+      let score = 50; // Base score
+      
+      // Add points based on savings rate
+      if (savingsRate > 20) score += 25;
+      else if (savingsRate > 10) score += 15;
+      else if (savingsRate > 5) score += 5;
+      
+      // Deduct points if expenses are more than 80% of income
+      if (expenses > income * 0.8) score -= 15;
+      
+      // Ensure score is between 0 and 100
+      score = Math.max(0, Math.min(100, Math.round(score)));
+      
+      document.getElementById('healthScore').textContent = score;
+      
+      // Update status text
+      const statusElement = document.querySelector('.health-status');
+      if (score >= 80) {
+        statusElement.textContent = 'Excellent - You have great financial health!';
+      } else if (score >= 60) {
+        statusElement.textContent = 'Good - You\'re on track with your finances';
+      } else if (score >= 40) {
+        statusElement.textContent = 'Fair - There\'s room for improvement';
+      } else {
+        statusElement.textContent = 'Needs attention - Consider reviewing your finances';
+      }
+    }
+
+    // Update recent transactions list
+    function updateRecentTransactions() {
+      const container = document.getElementById('recentTransactions');
+      container.innerHTML = '';
+      
+      // Get recent transactions (last 5)
+      const recent = [...transactions]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+      
+      recent.forEach(transaction => {
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        
+        const categoryClass = transaction.category === 'income' ? 'income' : transaction.category;
+        
+        li.innerHTML = `
+          <div class="transaction-info">
+            <div class="transaction-icon ${categoryClass}">
+              <i class="fas ${getCategoryIcon(transaction.category)}"></i>
+            </div>
+            <div class="transaction-details">
+              <div class="transaction-name">${transaction.description}</div>
+              <div class="transaction-category">${formatCategory(transaction.category)}</div>
+            </div>
+          </div>
+          <div class="transaction-amount ${transaction.type === 'income' ? 'income-amount' : 'expense-amount'}">
+            ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount)}
+          </div>
+          <div class="transaction-actions">
+            <button><i class="fas fa-edit"></i></button>
+            <button onclick="deleteTransaction(${transaction.id})"><i class="fas fa-trash"></i></button>
+          </div>
+        `;
+        
+        container.appendChild(li);
+      });
+    }
+
+    // Render all transactions in the modal
+    function renderAllTransactions() {
+      const container = document.getElementById('allTransactionsList');
+      container.innerHTML = '';
+      
+      // Apply filters
+      const searchTerm = document.getElementById('allTransactionsSearch').value.toLowerCase();
+      const categoryFilter = document.getElementById('allTransactionsCategoryFilter').value;
+      
+      const filtered = transactions.filter(t => {
+        const matchesSearch = t.description.toLowerCase().includes(searchTerm);
+        const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+      });
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '<li class="transaction-item"><div class="transaction-info">No transactions found</div></li>';
+        return;
+      }
+      
+      // Sort by date (newest first)
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      filtered.forEach(transaction => {
+        const li = document.createElement('li');
+        li.className = 'transaction-item';
+        
+        const categoryClass = transaction.category === 'income' ? 'income' : transaction.category;
+        const date = new Date(transaction.date).toLocaleDateString();
+        
+        li.innerHTML = `
+          <div class="transaction-info">
+            <div class="transaction-icon ${categoryClass}">
+              <i class="fas ${getCategoryIcon(transaction.category)}"></i>
+            </div>
+            <div class="transaction-details">
+              <div class="transaction-name">${transaction.description}</div>
+              <div class="transaction-category">${formatCategory(transaction.category)} • ${date}</div>
+            </div>
+          </div>
+          <div class="transaction-amount ${transaction.type === 'income' ? 'income-amount' : 'expense-amount'}">
+            ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount)}
+          </div>
+          <div class="transaction-actions">
+            <button><i class="fas fa-edit"></i></button>
+            <button onclick="deleteTransaction(${transaction.id})"><i class="fas fa-trash"></i></button>
+          </div>
+        `;
+        
+        container.appendChild(li);
+      });
+    }
+
+    // Get icon for category
+    function getCategoryIcon(category) {
+      switch(category) {
+        case 'food': return 'fa-utensils';
+        case 'rent': return 'fa-home';
+        case 'transport': return 'fa-car';
+        case 'medical': return 'fa-first-aid';
+        case 'entertainment': return 'fa-film';
+        case 'shopping': return 'fa-shopping-bag';
+        case 'income': return 'fa-money-bill-wave';
+        case 'investment': return 'fa-chart-line';
+        default: return 'fa-receipt';
+      }
+    }
+
+    // Format category name for display
+    function formatCategory(category) {
+      return category.charAt(0).toUpperCase() + category.slice(1);
+    }
+
+    // Delete a transaction
+    function deleteTransaction(id) {
+      if (confirm('Are you sure you want to delete this transaction?')) {
+        transactions = transactions.filter(t => t.id !== id);
+        saveTransactions();
+        updateDashboard();
+        updateRecentTransactions();
+        
+        // If all transactions modal is open, refresh it
+        if (document.getElementById('allTransactionsModal').style.display === 'flex') {
+          renderAllTransactions();
+        }
+      }
+    }
+
+    // Save transactions to localStorage
+    function saveTransactions() {
+      localStorage.setItem('financeTransactions', JSON.stringify(transactions));
+    }
+
+    // Save budgets to localStorage
+    function saveBudgets() {
+      localStorage.setItem('financeBudgets', JSON.stringify(budgets));
+    }
+
+    // Save settings
+    function saveSettings() {
+      const settings = {
+        currency: document.getElementById('currencySetting').value,
+        dateFormat: document.getElementById('dateFormatSetting').value,
+        notifications: document.getElementById('notificationsSetting').checked,
+        darkMode: document.getElementById('darkModeSetting').checked
+      };
+      
+      localStorage.setItem('financeSettings', JSON.stringify(settings));
+      
+      // Apply theme if changed
+      if (settings.darkMode) {
+        document.body.classList.add('dark');
+        document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+      } else {
+        document.body.classList.remove('dark');
+        document.getElementById('themeIcon').classList.replace('fa-sun', 'fa-moon');
+      }
+      
+      closeModal('settingsModal');
+      updateDashboard(); // Refresh currency formatting
+    }
+
+    // Export data
+    function exportData() {
+      const data = {
+        transactions: transactions,
+        budgets: budgets,
+        settings: localStorage.getItem('financeSettings') ? JSON.parse(localStorage.getItem('financeSettings')) : {}
+      };
+      
+      const dataStr = JSON.stringify(data);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = 'finance-data.json';
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    }
+
+    // Import data
+    function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      
+      input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            
+            if (data.transactions) {
+              transactions = data.transactions;
+              saveTransactions();
+            }
+            
+            if (data.budgets) {
+              budgets = data.budgets;
+              saveBudgets();
+            }
+            
+            if (data.settings) {
+              localStorage.setItem('financeSettings', JSON.stringify(data.settings));
+            }
+            
+            alert('Data imported successfully!');
+            initializeApp();
+          } catch (err) {
+            alert('Error importing data: Invalid file format');
+          }
+        };
+        
+        reader.readAsText(file);
+      };
+      
+      input.click();
+    }
+
+    // Confirm data reset
+    function confirmReset() {
+      if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+        localStorage.removeItem('financeTransactions');
+        localStorage.removeItem('financeBudgets');
+        transactions = [];
+        budgets = [];
+        initializeApp();
+        alert('All data has been reset.');
+      }
+    }
+
+    // Handle transaction form submission
+    document.getElementById('transactionForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const type = document.getElementById('transactionType').value;
+      const amount = parseFloat(document.getElementById('transactionAmount').value);
+      const category = document.getElementById('transactionCategory').value;
+      const date = document.getElementById('transactionDate').value;
+      const description = document.getElementById('transactionDescription').value;
+      const isRecurring = document.getElementById('isRecurring').checked;
+      const frequency = isRecurring ? document.getElementById('recurringFrequency').value : null;
+      
+      // Create new transaction
+      const newTransaction = {
+        id: transactions.length > 0 ? Math.max(...transactions.map(t => t.id)) + 1 : 1,
+        type,
+        amount,
+        category,
+        date,
+        description,
+        isRecurring,
+        frequency
+      };
+      
+      // Add to transactions array
+      transactions.push(newTransaction);
+      saveTransactions();
+      
+      // Update UI
+      updateDashboard();
+      updateRecentTransactions();
+      
+      // Close modal and reset form
+      closeModal('addTransactionModal');
+      this.reset();
+      document.getElementById('recurringOptions').style.display = 'none';
+      document.getElementById('transactionDate').valueAsDate = new Date();
+      
+      alert('Transaction added successfully!');
+    });
+
+    // Handle budget form submission
+    document.getElementById('budgetForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const category = document.getElementById('budgetCategory').value;
+      const amount = parseFloat(document.getElementById('budgetAmount').value);
+      const period = document.getElementById('budgetPeriod').value;
+      
+      // Check if budget already exists for this category
+      const existingIndex = budgets.findIndex(b => b.category === category && b.period === period);
+      
+      if (existingIndex >= 0) {
+        // Update existing budget
+        budgets[existingIndex].amount = amount;
+      } else {
+        // Add new budget
+        budgets.push({
+          category,
+          amount,
+          period
+        });
+      }
+      
+      saveBudgets();
+      closeModal('budgetModal');
+      this.reset();
+      
+      alert('Budget set successfully!');
+    });
+
+    // Search and filter functionality
+    document.getElementById('transactionSearch').addEventListener('input', updateRecentTransactions);
+    document.getElementById('categoryFilter').addEventListener('change', updateRecentTransactions);
+    document.getElementById('allTransactionsSearch').addEventListener('input', renderAllTransactions);
+    document.getElementById('allTransactionsCategoryFilter').addEventListener('change', renderAllTransactions);
+  </script>
+</body>
+</html>
